@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "PreisWächter — Amazon Monitor",
+  "version": "1.0.0",
+  "description": "Liest deinen Amazon Warenkorb aus und überwacht Preise mit KI-Kaufempfehlung.",
+  "permissions": [
+    "storage",
+    "notifications",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "alarms"
+  ],
+  "host_permissions": [
+    "https://www.amazon.de/*",
+    "https://www.amazon.it/*",
+    "https://www.amazon.com/*",
+    "https://www.amazon.co.uk/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16":  "icons/icon16.png",
+      "48":  "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.amazon.de/gp/cart/*",
+        "https://www.amazon.de/cart/*",
+        "https://www.amazon.it/gp/cart/*",
+        "https://www.amazon.it/cart/*",
+        "https://www.amazon.com/gp/cart/*",
+        "https://www.amazon.com/cart/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16":  "icons/icon16.png",
+    "48":  "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
