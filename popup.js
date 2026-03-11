@@ -4,7 +4,7 @@
 // ============================================================
 'use strict';
 
-const ICONS = { electronics:'🔌', gaming:'🎮', home:'🏠', fashion:'👕', books:'📚', sports:'⚽', beauty:'💄', other:'📦' };
+const ICONS = { electronics: '🔌', gaming: '🎮', home: '🏠', fashion: '👕', books: '📚', sports: '⚽', beauty: '💄', other: '📦' };
 let watchlist = [];
 
 // ── HELPERS ────────────────────────────────────────────────
@@ -34,9 +34,9 @@ let watchlist = [];
 function buyScore(history, current, target) {
   if (!history || history.length === 0) return 50;
 
-  const low  = Math.min(...history);
+  const low = Math.min(...history);
   const high = Math.max(...history);
-  const avg  = history.reduce((a, b) => a + b, 0) / history.length;
+  const avg = history.reduce((a, b) => a + b, 0) / history.length;
   const range = high - low;
 
   // ── A) Position im Range (0–40) ──────────────────────────
@@ -75,19 +75,19 @@ function buyScore(history, current, target) {
     const recent = history.slice(-14);
     const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
     const trendPct = (current - recentAvg) / recentAvg;
-    if (trendPct < -0.03)      scoreC = 20; // fällt stark  → kaufen
-    else if (trendPct < 0)     scoreC = 14; // fällt leicht → gut
-    else if (trendPct < 0.03)  scoreC = 8;  // stabil       → ok
-    else                       scoreC = 0;  // steigt       → warten
+    if (trendPct < -0.03) scoreC = 20; // fällt stark  → kaufen
+    else if (trendPct < 0) scoreC = 14; // fällt leicht → gut
+    else if (trendPct < 0.03) scoreC = 8;  // stabil       → ok
+    else scoreC = 0;  // steigt       → warten
   } else {
     scoreC = 10; // zu wenig Daten → neutral
   }
 
   // ── D) Zielpreis-Bonus (0–15) ────────────────────────────
   let scoreD = 0;
-  if (current <= target)                    scoreD = 15;
-  else if (current <= target * 1.05)        scoreD = 10; // bis 5% drüber
-  else if (current <= target * 1.10)        scoreD = 5;  // bis 10% drüber
+  if (current <= target) scoreD = 15;
+  else if (current <= target * 1.05) scoreD = 10; // bis 5% drüber
+  else if (current <= target * 1.10) scoreD = 5;  // bis 10% drüber
 
   const total = scoreA + scoreB + scoreC + scoreD;
   return Math.max(0, Math.min(100, total));
@@ -96,9 +96,9 @@ function buyScore(history, current, target) {
 function calcStats(history, current) {
   if (!history || history.length === 0) return { low: current, high: current, avg: current };
   return {
-    low:  Math.min(...history),
+    low: Math.min(...history),
     high: Math.max(...history),
-    avg:  history.reduce((a, b) => a + b, 0) / history.length,
+    avg: history.reduce((a, b) => a + b, 0) / history.length,
   };
 }
 
@@ -124,8 +124,13 @@ function loadData() {
     const sync = res.lastCartSync;
     if (sync) {
       const mins = Math.round((Date.now() - sync) / 60000);
+      let timeAgo;
+      if (mins < 1) timeAgo = '<1 Min.';
+      else if (mins < 60) timeAgo = `${mins} Min.`;
+      else if (mins < 1440) timeAgo = `${Math.round(mins / 60)} Std.`;
+      else timeAgo = `${Math.round(mins / 1440)} Tag${Math.round(mins / 1440) === 1 ? '' : 'en'}`;
       document.getElementById('sync-text').textContent =
-        `Zuletzt synchronisiert vor ${mins < 1 ? '<1' : mins} Min. — ${watchlist.length} Artikel`;
+        `Zuletzt synchronisiert vor ${timeAgo} — ${watchlist.length} Artikel`;
     }
     renderWatchlist();
     updateStats();
@@ -140,8 +145,8 @@ function updateStats() {
     if (p.price > p.target) savings += p.price - p.target;
   });
   document.getElementById('s-total').textContent = watchlist.length;
-  document.getElementById('s-buy').textContent   = buyCount;
-  document.getElementById('s-save').textContent  = savings.toFixed(0) + '€';
+  document.getElementById('s-buy').textContent = buyCount;
+  document.getElementById('s-save').textContent = savings.toFixed(0) + '€';
 }
 
 // ── WATCHLIST RENDER ───────────────────────────────────────
@@ -157,8 +162,8 @@ function renderWatchlist() {
       </div>
       <div class="steps">
         <div class="step"><div class="step-num">1</div><div class="step-text">Klicke oben auf <strong>„Warenkorb öffnen"</strong></div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-text">Logge dich bei <strong>Amazon.it</strong> ein und öffne deinen Warenkorb</div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-text">Klicke den orangenen <strong>„Importa carrello"</strong> Button unten rechts</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text">Logge dich bei <strong>Amazon</strong> ein und öffne deinen Warenkorb</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text">Klicke den orangenen <strong>„Warenkorb importieren"</strong> Button unten rechts</div></div>
         <div class="step"><div class="step-num">4</div><div class="step-text">Artikel erscheinen automatisch hier in der Watchlist</div></div>
       </div>`;
     return;
@@ -169,11 +174,11 @@ function renderWatchlist() {
     const stats = calcStats(p.history, p.price);
     const color = score >= 65 ? '#22c55e' : score >= 42 ? '#f59e0b' : '#ef4444';
     let rec, cls;
-    if      (score >= 65) { rec = '✅ ACQUISTA ORA';  cls = 'rec-buy'; }
-    else if (score >= 42) { rec = '⏳ ASPETTA';       cls = 'rec-wait'; }
-    else                  { rec = '❌ TROPPO CARO';   cls = 'rec-bad'; }
+    if (score >= 65) { rec = '✅ JETZT KAUFEN'; cls = 'rec-buy'; }
+    else if (score >= 42) { rec = '⏳ ABWARTEN'; cls = 'rec-wait'; }
+    else { rec = '❌ ZU TEUER'; cls = 'rec-bad'; }
 
-    const atLow    = p.price <= stats.low * 1.02;
+    const atLow = p.price <= stats.low * 1.02;
     const onTarget = p.price <= p.target;
 
     return `<div class="product" data-index="${i}">
@@ -185,27 +190,27 @@ function renderWatchlist() {
           <div class="prod-name" title="${p.name}">${p.name}</div>
           <div class="prod-meta">
             ${p.asin} · ${p.category}
-            ${atLow    ? ' · <span style="color:#22c55e">🏆 Minimo</span>' : ''}
-            ${onTarget ? ' · <span style="color:#ff6b35">🎯 Obiettivo</span>' : ''}
+            ${atLow ? ' · <span style="color:#22c55e">🏆 Tiefstpreis</span>' : ''}
+            ${onTarget ? ' · <span style="color:#ff6b35">🎯 Zielpreis</span>' : ''}
           </div>
         </div>
-        <button class="btn-remove" data-action="remove" data-index="${i}" title="Rimuovi">✕</button>
+        <button class="btn-remove" data-action="remove" data-index="${i}" title="Entfernen">✕</button>
       </div>
 
       <div class="prod-prices">
         <div class="price-chip price-current">
-          <div class="pv">${p.price.toFixed(2)}€</div><div class="pl">Attuale</div>
+          <div class="pv">${p.price.toFixed(2)}€</div><div class="pl">Aktuell</div>
         </div>
         <div class="price-chip price-low">
-          <div class="pv">${stats.low.toFixed(2)}€</div><div class="pl">Minimo</div>
+          <div class="pv">${stats.low.toFixed(2)}€</div><div class="pl">Tiefst</div>
         </div>
         <div class="price-chip price-target">
-          <div class="pv">${p.target.toFixed(2)}€</div><div class="pl">Obiettivo</div>
+          <div class="pv">${p.target.toFixed(2)}€</div><div class="pl">Ziel</div>
         </div>
       </div>
 
       <div class="score-row">
-        <div style="font-size:9px;font-family:'Inter',sans-serif;color:var(--text-muted);width:60px;">PUNTEGGIO</div>
+        <div style="font-size:9px;font-family:'Inter',sans-serif;color:var(--text-muted);width:60px;">BEWERTUNG</div>
         <div class="score-bar">
           <div class="score-fill" style="width:${score}%;background:${color};"></div>
         </div>
@@ -215,14 +220,14 @@ function renderWatchlist() {
       <div class="prod-actions">
         <span class="rec-badge ${cls}">${rec}</span>
         <div style="display:flex;gap:6px;">
-          <button class="btn-small" data-action="analyze" data-index="${i}">📊 Analisi</button>
-          ${p.asin ? `<a href="https://www.amazon.it/dp/${p.asin}" target="_blank" style="text-decoration:none"><button class="btn-small" style="border-color:rgba(255,107,53,0.4);color:var(--accent);">→</button></a>` : ''}
+          <button class="btn-small" data-action="analyze" data-index="${i}">📊 Analyse</button>
+          ${p.asin ? `<a href="https://www.amazon.de/dp/${p.asin}" target="_blank" style="text-decoration:none"><button class="btn-small" style="border-color:rgba(255,107,53,0.4);color:var(--accent);">→</button></a>` : ''}
         </div>
       </div>
 
       <div class="target-row">
-        <input class="target-input" type="number" step="0.01" placeholder="Modifica prezzo obiettivo..." data-index="${i}" />
-        <button class="btn-save" data-action="save-target" data-index="${i}">Salva</button>
+        <input class="target-input" type="number" step="0.01" placeholder="Zielpreis ändern..." data-index="${i}" />
+        <button class="btn-save" data-action="save-target" data-index="${i}">Speichern</button>
       </div>
     </div>`;
   }).join('');
@@ -236,13 +241,13 @@ function handleWatchlistClick(e) {
   const btn = e.target.closest('[data-action]');
   if (!btn) return;
   const action = btn.dataset.action;
-  const idx    = parseInt(btn.dataset.index);
+  const idx = parseInt(btn.dataset.index);
 
-  if (action === 'remove')  removeItem(idx);
+  if (action === 'remove') removeItem(idx);
   if (action === 'analyze') openAnalysis(idx);
   if (action === 'save-target') {
     // find the input in the same .product card
-    const card  = btn.closest('.product');
+    const card = btn.closest('.product');
     const input = card.querySelector('.target-input');
     saveTarget(idx, input);
   }
@@ -267,7 +272,7 @@ function removeItem(i) {
 }
 
 function clearWatchlist() {
-  if (!confirm('Rimuovere tutti gli articoli?')) return;
+  if (!confirm('Alle Artikel entfernen?')) return;
   watchlist = [];
   saveWatchlist();
   renderWatchlist();
@@ -282,16 +287,16 @@ function renderAlerts() {
   watchlist.forEach(p => {
     const score = buyScore(p.history, p.price, p.target);
     const stats = calcStats(p.history, p.price);
-    if (p.price <= p.target)       alerts.push({ icon:'🎯', p, msg:`Prezzo obiettivo raggiunto! ${p.price.toFixed(2)}€ ≤ ${p.target.toFixed(2)}€` });
-    if (p.price <= stats.low*1.02) alerts.push({ icon:'🏆', p, msg:`Minimo storico! Prezzo più basso degli ultimi 90 giorni.` });
-    if (score >= 65)               alerts.push({ icon:'✅', p, msg:`Punteggio KI ${score}/100 — Acquisto consigliato ora.` });
+    if (p.price <= p.target) alerts.push({ icon: '🎯', p, msg: `Zielpreis erreicht! ${p.price.toFixed(2)}€ ≤ ${p.target.toFixed(2)}€` });
+    if (p.price <= stats.low * 1.02) alerts.push({ icon: '🏆', p, msg: `Historisches Tief! Niedrigster Preis der letzten 90 Tage.` });
+    if (score >= 65) alerts.push({ icon: '✅', p, msg: `KI-Score ${score}/100 — Kauf jetzt empfohlen.` });
   });
 
   if (alerts.length === 0) {
     el.innerHTML = `<div class="empty" style="padding:40px 0;">
       <div class="empty-icon">🔕</div>
-      <div class="empty-title">Nessun alert attivo</div>
-      <div class="empty-sub">Gli alert appariranno qui quando i prezzi scendono.</div>
+      <div class="empty-title">Keine aktiven Alerts</div>
+      <div class="empty-sub">Alerts erscheinen hier, wenn Preise sinken.</div>
     </div>`;
     return;
   }
@@ -312,10 +317,10 @@ function renderAlerts() {
 function openAmazonCart() {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const current = tabs[0]?.url || '';
-    if (current.includes('amazon.it')) {
-      chrome.tabs.update(tabs[0].id, { url: 'https://www.amazon.it/gp/cart/view.html' });
+    if (current.includes('amazon.de')) {
+      chrome.tabs.update(tabs[0].id, { url: 'https://www.amazon.de/gp/cart/view.html' });
     } else {
-      chrome.tabs.create({ url: 'https://www.amazon.it/gp/cart/view.html' });
+      chrome.tabs.create({ url: 'https://www.amazon.de/gp/cart/view.html' });
     }
     window.close();
   });
@@ -324,78 +329,78 @@ function openAmazonCart() {
 // ── ANALYSE (rein algorithmisch, kein API Key nötig) ───────
 
 function buildAnalysis(p) {
-  const stats  = calcStats(p.history, p.price);
-  const score  = buyScore(p.history, p.price, p.target);
-  const range  = stats.high - stats.low;
+  const stats = calcStats(p.history, p.price);
+  const score = buyScore(p.history, p.price, p.target);
+  const range = stats.high - stats.low;
 
   // ── Empfehlung ──────────────────────────────────────────
   let empfehlung, empfColor, empfEmoji;
-  if      (score >= 65) { empfehlung = 'ACQUISTA ORA';  empfColor = '#22c55e'; empfEmoji = '✅'; }
-  else if (score >= 42) { empfehlung = 'ASPETTA';       empfColor = '#f59e0b'; empfEmoji = '⏳'; }
-  else                  { empfehlung = 'TROPPO CARO';   empfColor = '#ef4444'; empfEmoji = '❌'; }
+  if (score >= 65) { empfehlung = 'JETZT KAUFEN'; empfColor = '#22c55e'; empfEmoji = '✅'; }
+  else if (score >= 42) { empfehlung = 'ABWARTEN'; empfColor = '#f59e0b'; empfEmoji = '⏳'; }
+  else { empfehlung = 'ZU TEUER'; empfColor = '#ef4444'; empfEmoji = '❌'; }
 
   // ── Preis-Position ──────────────────────────────────────
-  const pctFromLow  = range > 0 ? ((p.price - stats.low)  / range * 100).toFixed(0) : 50;
+  const pctFromLow = range > 0 ? ((p.price - stats.low) / range * 100).toFixed(0) : 50;
   const pctFromHigh = range > 0 ? ((stats.high - p.price) / range * 100).toFixed(0) : 50;
-  const vsAvg       = ((p.price - stats.avg) / stats.avg * 100);
-  const vsAvgStr    = vsAvg <= 0
-    ? `${Math.abs(vsAvg).toFixed(1)}% sotto la media`
-    : `${vsAvg.toFixed(1)}% sopra la media`;
+  const vsAvg = ((p.price - stats.avg) / stats.avg * 100);
+  const vsAvgStr = vsAvg <= 0
+    ? `${Math.abs(vsAvg).toFixed(1)}% unter dem Durchschnitt`
+    : `${vsAvg.toFixed(1)}% über dem Durchschnitt`;
 
   // ── Trend ───────────────────────────────────────────────
   let trendLabel, trendColor;
   if (p.history.length >= 7) {
-    const recent   = p.history.slice(-14);
-    const rAvg     = recent.reduce((a, b) => a + b, 0) / recent.length;
+    const recent = p.history.slice(-14);
+    const rAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
     const trendPct = (p.price - rAvg) / rAvg * 100;
-    if      (trendPct < -3)  { trendLabel = `↘ In calo (${Math.abs(trendPct).toFixed(1)}%)`;  trendColor = '#22c55e'; }
-    else if (trendPct < 0)   { trendLabel = `↘ Legg. in calo`;                                 trendColor = '#22c55e'; }
-    else if (trendPct < 3)   { trendLabel = `→ Stabile`;                                       trendColor = '#f59e0b'; }
-    else                     { trendLabel = `↗ In aumento (${trendPct.toFixed(1)}%)`;           trendColor = '#ef4444'; }
+    if (trendPct < -3) { trendLabel = `↘ Fallend (${Math.abs(trendPct).toFixed(1)}%)`; trendColor = '#22c55e'; }
+    else if (trendPct < 0) { trendLabel = `↘ Leicht fallend`; trendColor = '#22c55e'; }
+    else if (trendPct < 3) { trendLabel = `→ Stabil`; trendColor = '#f59e0b'; }
+    else { trendLabel = `↗ Steigend (${trendPct.toFixed(1)}%)`; trendColor = '#ef4444'; }
   } else {
-    trendLabel = '→ Dati insufficienti'; trendColor = '#6b6b80';
+    trendLabel = '→ Zu wenig Daten'; trendColor = '#6b6b80';
   }
 
   // ── Rischio ─────────────────────────────────────────────
   const volatility = range > 0 ? (range / stats.avg * 100) : 0;
   let rischio, rischioColor;
-  if      (volatility < 10) { rischio = 'BASSO';  rischioColor = '#22c55e'; }
-  else if (volatility < 25) { rischio = 'MEDIO';  rischioColor = '#f59e0b'; }
-  else                      { rischio = 'ALTO';   rischioColor = '#ef4444'; }
+  if (volatility < 10) { rischio = 'NIEDRIG'; rischioColor = '#22c55e'; }
+  else if (volatility < 25) { rischio = 'MITTEL'; rischioColor = '#f59e0b'; }
+  else { rischio = 'HOCH'; rischioColor = '#ef4444'; }
 
   // ── Begründung (regelbasiert) ───────────────────────────
   const reasons = [];
-  if (p.price <= stats.low * 1.02)  reasons.push('vicino al minimo storico');
-  if (vsAvg <= 0)                    reasons.push(`${Math.abs(vsAvg).toFixed(1)}% sotto la media`);
-  if (p.price <= p.target)           reasons.push('prezzo obiettivo raggiunto');
-  if (p.price >= stats.high * 0.97)  reasons.push('vicino al massimo storico');
-  if (vsAvg > 10)                    reasons.push(`${vsAvg.toFixed(1)}% sopra la media`);
+  if (p.price <= stats.low * 1.02) reasons.push('nahe am historischen Tief');
+  if (vsAvg <= 0) reasons.push(`${Math.abs(vsAvg).toFixed(1)}% unter dem Durchschnitt`);
+  if (p.price <= p.target) reasons.push('Zielpreis erreicht');
+  if (p.price >= stats.high * 0.97) reasons.push('nahe am historischen Hoch');
+  if (vsAvg > 10) reasons.push(`${vsAvg.toFixed(1)}% über dem Durchschnitt`);
 
   let begruendung;
   if (reasons.length > 0) {
-    begruendung = `Prezzo ${reasons.join(' e ')}. `;
+    begruendung = `Preis ${reasons.join(' und ')}. `;
   } else {
-    begruendung = `Prezzo nella fascia media del range storico. `;
+    begruendung = `Preis im mittleren Bereich der historischen Spanne. `;
   }
   begruendung += score >= 65
-    ? 'È un buon momento per acquistare.'
+    ? 'Guter Zeitpunkt zum Kaufen.'
     : score >= 42
-      ? 'Conviene attendere un ulteriore calo.'
-      : 'Prezzo troppo alto rispetto alla storia.';
+      ? 'Besser auf einen weiteren Preisrückgang warten.'
+      : 'Preis im Vergleich zur Historie zu hoch.';
 
   // ── Kaufzeitpunkt ───────────────────────────────────────
   const month = new Date().getMonth();
   let timing;
-  if      (p.price <= p.target)      timing = 'Adesso — prezzo obiettivo raggiunto!';
-  else if (p.price <= stats.low*1.05) timing = 'Adesso — vicino al minimo storico';
-  else if (month >= 10)               timing = 'Black Friday (nov.) o Natale';
-  else if (month >= 6 && month <= 8)  timing = 'Amazon Prime Day o fine estate';
-  else if (vsAvg > 5)                 timing = 'Aspetta un calo del 5–10%';
-  else                                timing = 'Prossime settimane se il trend continua';
+  if (p.price <= p.target) timing = 'Jetzt — Zielpreis erreicht!';
+  else if (p.price <= stats.low * 1.05) timing = 'Jetzt — nahe am historischen Tief';
+  else if (month >= 10) timing = 'Black Friday (Nov.) oder Weihnachten';
+  else if (month >= 6 && month <= 8) timing = 'Amazon Prime Day oder Sommer-Sale';
+  else if (vsAvg > 5) timing = 'Abwarten bis zu 5–10% Preisrückgang';
+  else timing = 'Nächste Wochen, wenn Trend anhält';
 
   // ── Risparmio potenziale ────────────────────────────────
   const savingToTarget = p.price > p.target ? (p.price - p.target).toFixed(2) : '0.00';
-  const savingToLow    = p.price > stats.low ? (p.price - stats.low).toFixed(2) : '0.00';
+  const savingToLow = p.price > stats.low ? (p.price - stats.low).toFixed(2) : '0.00';
 
   return {
     score, empfehlung, empfColor, empfEmoji, begruendung,
@@ -406,8 +411,8 @@ function buildAnalysis(p) {
 }
 
 function openAnalysis(i) {
-  const p   = watchlist[i];
-  const a   = buildAnalysis(p);
+  const p = watchlist[i];
+  const a = buildAnalysis(p);
 
   document.getElementById('ai-title').textContent =
     p.name.slice(0, 40) + (p.name.length > 40 ? '…' : '');
@@ -433,32 +438,32 @@ function openAnalysis(i) {
   // Score breakdown bar
   document.getElementById('ai-text').innerHTML = `
     <div style="margin-bottom:12px;">
-      ${scoreBar('Posizione nel range', a.pctFromLow <= 30 ? 80 : a.pctFromLow <= 60 ? 50 : 20, '#ff6b35')}
-      ${scoreBar('Vs. media 90 giorni', a.stats.avg > 0 ? Math.round(Math.max(0, 100 - (p.price - a.stats.avg) / a.stats.avg * 200)) : 50, '#00d4aa')}
-      ${scoreBar('Trend 14 giorni',     a.trendColor === '#22c55e' ? 85 : a.trendColor === '#f59e0b' ? 50 : 15, a.trendColor)}
+      ${scoreBar('Position im Preisbereich', a.pctFromLow <= 30 ? 80 : a.pctFromLow <= 60 ? 50 : 20, '#ff6b35')}
+      ${scoreBar('Vs. 90-Tage-Durchschnitt', a.stats.avg > 0 ? Math.round(Math.max(0, 100 - (p.price - a.stats.avg) / a.stats.avg * 200)) : 50, '#00d4aa')}
+      ${scoreBar('14-Tage-Trend', a.trendColor === '#22c55e' ? 85 : a.trendColor === '#f59e0b' ? 50 : 15, a.trendColor)}
     </div>`;
 
   document.getElementById('ai-grid').innerHTML = `
     <div class="ai-fact">
-      <div class="ai-fact-lbl">Momento migliore</div>
+      <div class="ai-fact-lbl">Bester Kaufzeitpunkt</div>
       <div class="ai-fact-val" style="font-size:10px;line-height:1.4">${a.timing}</div>
     </div>
     <div class="ai-fact">
-      <div class="ai-fact-lbl">Trend attuale</div>
+      <div class="ai-fact-lbl">Aktueller Trend</div>
       <div class="ai-fact-val" style="color:${a.trendColor};font-size:11px">${a.trendLabel}</div>
     </div>
     <div class="ai-fact">
-      <div class="ai-fact-lbl">Rischio volatilità</div>
+      <div class="ai-fact-lbl">Volatilitätsrisiko</div>
       <div class="ai-fact-val" style="color:${a.rischioColor}">${a.rischio}</div>
     </div>
     <div class="ai-fact">
-      <div class="ai-fact-lbl">Risparmio potenziale</div>
+      <div class="ai-fact-lbl">Mögliche Ersparnis</div>
       <div class="ai-fact-val" style="font-size:11px">
-        ${a.savingToTarget > 0 ? `vs obiettivo: <span style="color:#00d4aa">−${a.savingToTarget}€</span>` : '✅ Obiettivo raggiunto'}
+        ${a.savingToTarget > 0 ? `vs. Ziel: <span style="color:#00d4aa">−${a.savingToTarget}€</span>` : '✅ Zielpreis erreicht'}
       </div>
     </div>
     <div class="ai-fact" style="grid-column:1/-1">
-      <div class="ai-fact-lbl">Range storico 90 giorni</div>
+      <div class="ai-fact-lbl">90-Tage-Preisspanne</div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
         <span style="font-family:'Inter',sans-serif;font-size:11px;color:#22c55e">${a.stats.low.toFixed(2)}€</span>
         <div style="flex:1;height:6px;background:var(--border);border-radius:3px;position:relative;">
@@ -472,7 +477,7 @@ function openAnalysis(i) {
         <span style="font-family:'Inter',sans-serif;font-size:11px;color:#ef4444">${a.stats.high.toFixed(2)}€</span>
       </div>
       <div style="font-family:'Inter',sans-serif;font-size:10px;color:var(--text-muted);margin-top:4px;text-align:center;">
-        Prezzo attuale ${a.vsAvgStr} · ${a.pctFromLow}% dal minimo
+        Aktueller Preis ${a.vsAvgStr} · ${a.pctFromLow}% vom Tief
       </div>
     </div>`;
 

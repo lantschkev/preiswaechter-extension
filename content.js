@@ -178,21 +178,21 @@
         }
         // Fallback: split whole + fraction
         if (!priceText) {
-          const whole    = el.querySelector('.a-price-whole');
+          const whole = el.querySelector('.a-price-whole');
           const fraction = el.querySelector('.a-price-fraction');
-          if (whole) priceText = whole.textContent.replace(/[^\d]/g,'') + '.' + (fraction ? fraction.textContent.trim() : '00');
+          if (whole) priceText = whole.textContent.replace(/[^\d]/g, '') + '.' + (fraction ? fraction.textContent.trim() : '00');
         }
 
         const price = parsePrice(priceText);
         if (!price || price <= 0) return;
 
         const imgEl = el.querySelector('img.sc-product-image, img[data-a-image-name]');
-        const qty   = parseInt(qtyEl.value || qtyEl.textContent) || 1;
+        const qty = parseInt(qtyEl.value || qtyEl.textContent) || 1;
 
         seenAsins.add(asin);
         items.push({ asin, name, price, image: imgEl ? imgEl.src : '', qty, category: guessCategory(name) });
 
-      } catch (e) {}
+      } catch (e) { }
     });
 
     // ── STRATEGY 3: Fallback for React-based cart layout ──
@@ -203,17 +203,17 @@
         try {
           const asin = el.id.replace('sc-item-', '').split('-')[0];
           if (!asin || asin.length !== 10 || seenAsins.has(asin)) return;
-          const nameEl  = el.querySelector('span[id*="item-title"], .a-size-medium');
-          const name    = nameEl ? nameEl.textContent.trim() : '';
+          const nameEl = el.querySelector('span[id*="item-title"], .a-size-medium');
+          const name = nameEl ? nameEl.textContent.trim() : '';
           const priceEl = el.querySelector('.sc-price, .a-color-price');
-          const price   = parsePrice(priceEl ? priceEl.textContent : '');
-          const qtyEl   = el.querySelector('select[name^="quantity"], input[name^="quantity"]');
+          const price = parsePrice(priceEl ? priceEl.textContent : '');
+          const qtyEl = el.querySelector('select[name^="quantity"], input[name^="quantity"]');
           if (!qtyEl) return; // must have qty control
           if (asin && name && price > 0) {
             seenAsins.add(asin);
-            items.push({ asin, name, price, image: '', qty: parseInt(qtyEl.value)||1, category: guessCategory(name) });
+            items.push({ asin, name, price, image: '', qty: parseInt(qtyEl.value) || 1, category: guessCategory(name) });
           }
-        } catch (e) {}
+        } catch (e) { }
       });
     }
 
@@ -256,11 +256,11 @@
     const items = extractCartItems();
 
     if (items.length === 0) {
-      showToast('⚠️ Nessun articolo trovato nel carrello.\nAssicurati di essere sulla pagina del carrello e di aver effettuato il login.', false);
+      showToast('⚠️ Keine Artikel im Warenkorb gefunden.\nStelle sicher, dass du auf der Warenkorb-Seite bist und eingeloggt bist.', false);
       return;
     }
 
-    showToast(`⏳ Lettura di ${items.length} articoli...`);
+    showToast(`⏳ Lese ${items.length} Artikel...`);
 
     chrome.runtime.sendMessage({
       type: 'CART_ITEMS',
@@ -272,7 +272,7 @@
         showToast('❌ Verbindung zum PreisWächter fehlgeschlagen.', false);
         return;
       }
-      showToast(`✅ ${items.length} articoli importati in PreisWächter!\nApri il popup per vedere la Watchlist.`);
+      showToast(`✅ ${items.length} Artikel in PreisWächter importiert!\nÖffne das Popup, um deine Watchlist zu sehen.`);
 
       // Update badge count
       const cnt = document.getElementById('pw-badge-count');

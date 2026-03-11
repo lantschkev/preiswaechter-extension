@@ -13,7 +13,6 @@
   ],
   "host_permissions": [
     "https://www.amazon.de/*",
-    "https://www.amazon.it/*",
     "https://www.amazon.com/*",
     "https://www.amazon.co.uk/*"
   ],
@@ -30,8 +29,6 @@
       "matches": [
         "https://www.amazon.de/gp/cart/*",
         "https://www.amazon.de/cart/*",
-        "https://www.amazon.it/gp/cart/*",
-        "https://www.amazon.it/cart/*",
         "https://www.amazon.com/gp/cart/*",
         "https://www.amazon.com/cart/*"
       ],
