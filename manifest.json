@@ -12,9 +12,27 @@
     "alarms"
   ],
   "host_permissions": [
-    "https://www.amazon.de/*",
+    "https://www.amazon.ae/*",
+    "https://www.amazon.ca/*",
+    "https://www.amazon.cn/*",
+    "https://www.amazon.co.jp/*",
+    "https://www.amazon.co.uk/*",
     "https://www.amazon.com/*",
-    "https://www.amazon.co.uk/*"
+    "https://www.amazon.com.au/*",
+    "https://www.amazon.com.br/*",
+    "https://www.amazon.com.mx/*",
+    "https://www.amazon.com.tr/*",
+    "https://www.amazon.de/*",
+    "https://www.amazon.eg/*",
+    "https://www.amazon.es/*",
+    "https://www.amazon.fr/*",
+    "https://www.amazon.in/*",
+    "https://www.amazon.it/*",
+    "https://www.amazon.nl/*",
+    "https://www.amazon.pl/*",
+    "https://www.amazon.sa/*",
+    "https://www.amazon.se/*",
+    "https://www.amazon.sg/*"
   ],
   "action": {
     "default_popup": "popup.html",
@@ -27,10 +45,27 @@
   "content_scripts": [
     {
       "matches": [
-        "https://www.amazon.de/gp/cart/*",
-        "https://www.amazon.de/cart/*",
-        "https://www.amazon.com/gp/cart/*",
-        "https://www.amazon.com/cart/*"
+        "https://www.amazon.ae/gp/cart/*",   "https://www.amazon.ae/cart/*",
+        "https://www.amazon.ca/gp/cart/*",   "https://www.amazon.ca/cart/*",
+        "https://www.amazon.cn/gp/cart/*",   "https://www.amazon.cn/cart/*",
+        "https://www.amazon.co.jp/gp/cart/*","https://www.amazon.co.jp/cart/*",
+        "https://www.amazon.co.uk/gp/cart/*","https://www.amazon.co.uk/cart/*",
+        "https://www.amazon.com/gp/cart/*",  "https://www.amazon.com/cart/*",
+        "https://www.amazon.com.au/gp/cart/*","https://www.amazon.com.au/cart/*",
+        "https://www.amazon.com.br/gp/cart/*","https://www.amazon.com.br/cart/*",
+        "https://www.amazon.com.mx/gp/cart/*","https://www.amazon.com.mx/cart/*",
+        "https://www.amazon.com.tr/gp/cart/*","https://www.amazon.com.tr/cart/*",
+        "https://www.amazon.de/gp/cart/*",   "https://www.amazon.de/cart/*",
+        "https://www.amazon.eg/gp/cart/*",   "https://www.amazon.eg/cart/*",
+        "https://www.amazon.es/gp/cart/*",   "https://www.amazon.es/cart/*",
+        "https://www.amazon.fr/gp/cart/*",   "https://www.amazon.fr/cart/*",
+        "https://www.amazon.in/gp/cart/*",   "https://www.amazon.in/cart/*",
+        "https://www.amazon.it/gp/cart/*",   "https://www.amazon.it/cart/*",
+        "https://www.amazon.nl/gp/cart/*",   "https://www.amazon.nl/cart/*",
+        "https://www.amazon.pl/gp/cart/*",   "https://www.amazon.pl/cart/*",
+        "https://www.amazon.sa/gp/cart/*",   "https://www.amazon.sa/cart/*",
+        "https://www.amazon.se/gp/cart/*",   "https://www.amazon.se/cart/*",
+        "https://www.amazon.sg/gp/cart/*",   "https://www.amazon.sg/cart/*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"
